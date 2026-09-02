@@ -19,18 +19,18 @@ THE COBRA LILY TRAP
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-THE LIQUIDITY INDICATION TRAP
-                    
-     [ Local Central Bank Shock / Net Liquidity Shift ]  <--- Sweet Nectar (Trigger Signal)
-                           │
-                           ▼
-     [ Micro-Mispricing in BTC / USD or Alt-Pairs ]     <--- False Exit / Fenestration
-                           │
-                           ▼
-     [ Algorithmic Liquidations & Systematic Flows ]     <--- Slippery Walls (One-Way Drift)
-                           │
-                           ▼
-     [ Model Execution / Capturing the Spread ]          <--- Absorption (Taking Profit)
+COBRA LILY EXECUTION ENGINE
+                          
+[Global Liquidity Shift]   <--- The Nectar (Directional Bias / Macro Driver)
+            │
+            ▼
+[High Open Interest (OI)]  <--- Density of Flies (Market Over-Leverage)
+            │
+            ▼
+[Liquidation Traps/Pools]  <--- Downward Hairs (Cascade Trigger Zones)
+            │
+            ▼
+[Systematic Execution]     <--- Absorption (Capturing the Liquidation Spread)
 
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
