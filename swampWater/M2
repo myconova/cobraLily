@@ -1,0 +1,11 @@
+import os
+import requests
+import pandas as pd
+from dotenv import load_dotenv
+
+load_dotenv()
+api_key = os.getenv('FRED_API_KEY')
+
+# define the FRED API endpoint
+base_url = 'https://api.stlouisfed.org/fred/'
+
