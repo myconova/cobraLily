@@ -18,20 +18,25 @@ obs_endpoint = 'series/observations'
 Get US_ONLY or GLOBAL_AGGREGATE YoY from the FRED API
 '''
 
-# API Query Parameters for Scope 1 (US M2)
-params = {
-    'series_id': 'M2SL', # FRED series ID for US M2 money supply
-    'api_key': api_key,
-    'file_type': 'json', # Request JSON output (easier to parse than XML)
-    'observation_start': '2001-01-01', # Start date
-    'observation_end':'2027-12-31', # End date
-    'frequency': 'm', # Monthlyfrequency
-    'units': 'lin' # Raw level in Billions of USD
-}
-series_id = 'M2SL'
-start_date = '2000-01-01'
-end_date = '2027-12-31'
-ts_frequency = 'q'
-ts_units = 'pc1'
+def fetch_fred_series(series_id, api_key, start_date='2000-01-01', end_date='2030-12-31'):
+    url = f"{base_url}{obs_endpoint}"
+    params = {
+        'series_id': series_id,
+        'api_key': api_key,
+        'file_type': 'json',
+        'observation_start': start_date,
+        'observation_end': end_date,
+        'frequency': 'm',
+        'units': 'lin'
+    }
+    response = requests.get(url, params=params)
+    response.raise_for_status() 
+
+    data = response.json()
+    df = pd.DataFrame(data['observations'])[['date', 'value']]
+    df['date'] = pd.to_datetime(df['date'])
+    df[series_id] = pd.to_numeric(df['value'], errors='coerce')
+    df = df.set_index('date')[[series_id]]
+    return df
 
 
