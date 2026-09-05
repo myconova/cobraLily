@@ -6,6 +6,32 @@ from dotenv import load_dotenv
 load_dotenv()
 api_key = os.getenv('FRED_API_KEY')
 
+# ---Backtesting Configuration Toggles ---
+SCOPE = "US-ONLY"   # Options: "US-ONLY" or "GLOBAL_AGGREGATE"
+IMPULSE_METHOD = "OPTION_A"   # Options: "OPTION_A" (YoY Delta) or "OPTION_B" (3M Ann - YoY)
+
 # define the FRED API endpoint
 base_url = 'https://api.stlouisfed.org/fred/'
+obs_endpoint = 'series/observations'
+
+'''
+Get US_ONLY or GLOBAL_AGGREGATE YoY from the FRED API
+'''
+
+# API Query Parameters for Scope 1 (US M2)
+params = {
+    'series_id': 'M2SL', # FRED series ID for US M2 money supply
+    'api_key': api_key,
+    'file_type': 'json', # Request JSON output (easier to parse than XML)
+    'observation_start': '2001-01-01', # Start date
+    'observation_end':'2027-12-31', # End date
+    'frequency': 'm', # Monthlyfrequency
+    'units': 'lin' # Raw level in Billions of USD
+}
+series_id = 'M2SL'
+start_date = '2000-01-01'
+end_date = '2027-12-31'
+ts_frequency = 'q'
+ts_units = 'pc1'
+
 
