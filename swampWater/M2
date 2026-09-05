@@ -39,4 +39,35 @@ def fetch_fred_series(series_id, api_key, start_date='2000-01-01', end_date='203
     df = df.set_index('date')[[series_id]]
     return df
 
+# --- STEP 1: FETCH DATA BASED ON SCOPE TOGGLE ---
+if SCOPE == "US-ONLY":
+    m2_df = fetch_fred_series('M2SL', api_key)
+    m2_df = m2_df.rename(columns={'M2SL': 'm2_level'})
+
+elif SCOPE == "GLOBAL_AGGREGATE":
+    # 1. Fetch US, Euro Area, Japan, China M2 series
+    us_m2 = fetch_fred_series('M2SL', api_key) # Billions USD
+    ea_m2 = fetch_fred_series('MYAGM2EZM196N', api_key) # Millions EUR
+    jp_m2 = fetch_fred_series('JPNCBMM2JPYM', api_key) # Billions JPY
+    cn_m2 = fetch_fred_series('MYAGM2CNM189N', api_key) # Billions CNY
+
+    # 2. Fetch exchange rates
+    eur_usd = fetch_fred_series('DEXUSEU', api_key) # USD per 1 EUR
+    jpy_usd = fetch_fred_series('DEXJPUS', api_key) # JPY per 1 USD
+    cny_usd = fetch_fred_series('DEXCHUS', api_key) # CNY per 1 USD
+
+    # 3. Combine into a single DataFrame and handle daily/monthly alignment
+    global_df = pd.concat([us_m2, ea_m2, jp_m2, cn_m2, eur_usd, jpy_usd, cny_usd], axis=1)
+    global_df = global_df.resample('ME').last().ffill()
+
+    # 4. Currency conversions to Billions USD
+    us_usd = global_df['M2SL'] # Already in Billions USD
+    ea_usd = (global_df['MYAGM2EZM196N'] / 1000.0) * global_df['DEXUSEU'] # Convert Millions EUR to Billions USD
+    jp_usd = global_df['JPNCBMM2JPYM'] / global_df['DEXJPUS'] # Convert Billions JPY to Billions USD
+    cn_usd = global_df['MYAGM2CNM189N'] / global_df['DEXCHUS'] # Convert Billions CNY to Billions USD
+
+    # 5. Sum into unified m2_level series
+    m2_df = pd.DataFrame()
+    m2_df['m2_level'] = us_usd + ea_usd + jp_usd + cn_usd
+
 
