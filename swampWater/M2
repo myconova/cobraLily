@@ -11,7 +11,7 @@ if not api_key:
                      )
 # ---Backtesting Configuration Toggles ---
 SCOPE = "US_ONLY"   # Options: "US_ONLY" or "GLOBAL_AGGREGATE"
-IMPULSE_METHOD = "OPTION_A"   # Options: "OPTION_A" (YoY Delta) or "OPTION_B" (3M Ann - YoY)
+IMPULSE_METHOD = "YOY_DELTA"   # Options: "YOY_DELTA" or "ANNUALIZED_SPREAD" (3M Ann - YoY)
 
 # define the FRED API endpoint
 BASE_URL = 'https://api.stlouisfed.org/fred/'
@@ -74,5 +74,21 @@ elif SCOPE == "GLOBAL_AGGREGATE":
 
 else:
     raise ValueError(f"Invalid SCOPE value: '{SCOPE}'. Expected 'US_ONLY' or 'GLOBAL_AGGREGATE'.")
+
+# --- STEP 2: CALCULATE YoY GROWTH RATE ---
+m2_df['yoy_growth'] = m2_df['m2_level'].pct_change(12) * 100
+
+# --- STEP 3: CALCULATE 3-MONTH MOMENTUM / IMPULSE ---
+if IMPULSE_METHOD == "YOY_DELTA":
+    # 3-Month Change in YoY Rate
+    m2_df['impulse'] = m2_df['yoy_growth'] - m2_df['yoy_growth'].shift(3)
+
+elif IMPULSE_METHOD == "ANNUALIZED_SPREAD":
+    # Spread between 3-Month Annualized Growth and YoY Rate
+    three_m_ann = (((m2_df['m2_level'] / m2_df['m2_level'].shift(3)) ** 4) - 1) * 100
+    m2_df['impulse'] = three_m_ann - m2_df['yoy_growth']
+
+else:
+    raise ValueError(f"Invalid IMPULSE_METHOD value: '{IMPULSE_METHOD}'. Expected 'YOY_DELTA' or 'ANNUALIZED_SPREAD'.")
 
 
