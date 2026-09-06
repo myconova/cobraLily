@@ -1,6 +1,7 @@
 import os
 import requests
 import pandas as pd
+import numpy as np  
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -90,5 +91,22 @@ elif IMPULSE_METHOD == "ANNUALIZED_SPREAD":
 
 else:
     raise ValueError(f"Invalid IMPULSE_METHOD value: '{IMPULSE_METHOD}'. Expected 'YOY_DELTA' or 'ANNUALIZED_SPREAD'.")
+
+# --- STEP 4: REGIME CLASSIFICATION MATRIX ---
+conditions = [
+    (m2_df['yoy_growth'] > 0) & (m2_df['impulse'] > 0), # Regime 1: Accelerating Expansion
+    (m2_df['yoy_growth'] > 0) & (m2_df['impulse'] <= 0), # Regime 2: Decelerating Expansion
+    (m2_df['yoy_growth'] <= 0) & (m2_df['impulse'] <= 0), # Regime 3: Accelerating Contraction
+    (m2_df['yoy_growth'] <= 0) & (m2_df['impulse'] > 0) # Regime 4: Decelerating Contraction
+]
+
+choices = [
+    'Accelerating Expansion', 
+    'Decelerating Expansion',
+    'Accelerating Contraction',
+    'Decelerating Contraction'
+]
+
+m2_df['regime'] = np.select(conditions, choices, default=np.nan)
 
 
