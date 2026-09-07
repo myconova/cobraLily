@@ -107,6 +107,10 @@ choices = [
     'Decelerating Contraction'
 ]
 
-m2_df['regime'] = np.select(conditions, choices, default=np.nan)
+m2_df['regime'] = np.select(conditions, choices, default='Unknown')
+
+
+if __name__ == "__main__":
+    print(m2_df.tail())
 
 
