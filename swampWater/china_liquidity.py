@@ -1,6 +1,7 @@
 import os
 import requests
 import pandas as pd
+import numpy as np
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -72,6 +73,34 @@ china_df["china_m2_yoy_growth"] = (
 
 china_df["rmb_fx_pressure_3m"] = (
     china_df["cny_per_usd"].pct_change(3) * 100
+)
+
+china_df["china_m2_impulse"] = (
+    china_df["china_m2_yoy_growth"] - china_df["china_m2_yoy_growth"].shift(3)
+)
+
+conditions = [
+    (china_df["china_m2_impulse"] > 0)
+    & (china_df["rmb_fx_pressure_3m"] <= 0),
+    (china_df["china_m2_impulse"] > 0)
+    & (china_df["rmb_fx_pressure_3m"] > 0),
+    (china_df["china_m2_impulse"] <= 0)
+    & (china_df["rmb_fx_pressure_3m"] <= 0),
+    (china_df["china_m2_impulse"] <= 0)
+    & (china_df["rmb_fx_pressure_3m"] > 0),
+]
+
+choices = [
+    "Accelerating M2, Low FX Pressure",
+    "Accelerating M2, High FX Pressure",
+    "Decelerating M2, Low FX Pressure",
+    "Decelerating M2, High FX Pressure",
+]
+
+china_df["china_liquidity_regime"] = np.select(
+    conditions,
+    choices,
+    default="Unknown",
 )
 
 print(china_df.tail())
