@@ -42,6 +42,7 @@ dxy_df["dxy_roc_14d"] = dxy_df["dxy_level"].pct_change(14) * 100
 
 dxy_df["dxy_stress_2pct"] = dxy_df["dxy_roc_14d"] > 2
 
-print(dxy_df.tail())
+if __name__ == "__main__":
+    print(dxy_df.tail())
 
 
